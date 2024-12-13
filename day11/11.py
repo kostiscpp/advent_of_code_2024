@@ -1,40 +1,32 @@
-def is_valid(x, y, n, m):
-	return (0 <= x < n and 0 <= y < n)
-
-def is_path(G, s):
-	ans = 0
-	visited = set()
-	nines = set()
-	n, m = len(G), len(G[0])
-	queue = [s]
-	visited.add(s)
-	dirs = [(-1,0), (1,0), (0,-1), (0,1)]
-	while queue:
-		x, y = queue.pop(0)
-		if G[x][y] == 9:
-			nines.add((x, y))
-			continue
-		for dx, dy in dirs:
-			xn, yn = x + dx, y + dy
-			if is_valid(xn, yn, n, m) and (xn, yn) not in visited:
-				if G[xn][yn] - G[x][y] == 1:
-					queue.append((xn, yn))
-					visited.add((xn, yn))
-	return len(nines)
+import math
+from collections import Counter
+def rules(nums):
+	new_nums = Counter()
+	for n, f in nums.items():
+		if n != 0:
+			dig = int(math.log10(n)) + 1
+		if n == 0:
+			new_nums[1] += f
+		elif dig % 2 == 0:
+			h = 10 ** (dig//2)
+			l = n // h
+			r = n % h
+			new_nums[l] += f
+			new_nums[r] += f
+		else:
+			mul = 2024 * n
+			new_nums[mul] += f
+	return new_nums
 
 
-def count_paths(G):
-	ans = 0
-	for r in range(len(G)):
-		for c in range(len(G[0])):
-			if G[r][c] == 0:
-				ans += is_path(G, (r,c))
-	return ans
-
-
-G = []
+nums = []
 with open('11.in', 'r') as file:
 	for line in file:
-		G.append(list(map(int, line.strip('\n'))))
-
-print(count_paths(G))
+		nums = line.strip('\n').split(' ')
+	freq = Counter()
+	for n in nums:
+		nat = int(n)
+		freq[nat] += 1
+	for i in range(75):
+		freq = rules(freq)
+	print(sum(freq.values()))
