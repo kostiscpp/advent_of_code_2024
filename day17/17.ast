@@ -1,0 +1,10 @@
+start:
+B = A % 8
+B = B ^ 7
+C = A // 2**B
+A = A // 8
+B = B ^ C
+B =B ^ 7
+print(B % 8)
+if (A != 0) goto start
+
